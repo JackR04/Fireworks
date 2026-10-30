@@ -1,0 +1,21 @@
+using NUnit.Framework;
+using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.UIElements;
+//using static UnityEditor.Progress;
+
+public class SCR_GUI_Crafting : MonoBehaviour
+{
+    public List<CraftableData> craftingList;
+    [SerializeField] private GameObject slot;
+    public SCR_Inventory inventory;
+    public SCR_GUI_Inventory SCR_GUI_Inventory;
+    [HideInInspector]public SCR_CraftingInventory craftingInventory;
+
+    public void CreateCraftingGUI(SCR_Inventory inventory, GameObject craftingBackground,GameObject inventoryBackground) 
+    {
+        craftingBackground.SetActive(true);
+        this.inventory = inventory;
+        SCR_GUI_Inventory.CreateInventoryGUI(inventory, inventoryBackground);
+    }
+}

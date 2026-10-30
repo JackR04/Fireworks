@@ -1,0 +1,142 @@
+
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class SCR_PlayerInventory : MonoBehaviour
+{
+    public SCR_Inventory inventoryScript;
+    public GameObject inventoryBackground;
+    public GameObject craftingBackground;
+    public List<ItemData> inventoryList;
+
+    [HideInInspector] public SCR_CraftingInventory craftingScript;
+    [HideInInspector] public SCR_GUI_Inventory inventoryGUI;
+    [HideInInspector] public SCR_GUI_Crafting craftingGUI;
+
+    private InputAction inventoryButton;
+    private InputAction craftingButton;
+    private InputAction move;
+    private InputAction look;
+    private InputAction fire;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        inventoryGUI = GetComponent<SCR_GUI_Inventory>();
+        craftingGUI = GetComponent<SCR_GUI_Crafting>();
+        
+        inventoryScript = new SCR_Inventory();
+        craftingScript = new SCR_CraftingInventory();
+
+        
+        inventoryScript.SetInventory(inventoryList);
+
+        inventoryButton = InputSystem.actions.FindAction("Inventory");
+        craftingButton = InputSystem.actions.FindAction("Crafting");
+        move = InputSystem.actions.FindAction("Move");
+        look = InputSystem.actions.FindAction("Look");
+        fire = InputSystem.actions.FindAction("Attack");
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // re-enable inputs when crafting and inventory GUI are closed
+        if (!craftingBackground.activeInHierarchy && !inventoryBackground.activeInHierarchy && !move.enabled && !look.enabled && !fire.enabled)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = false;
+            move.Enable();
+            look.Enable();
+            fire.Enable();
+        }
+        if (inventoryButton.triggered)
+        {
+           
+            OnInventory();
+        }
+        if (craftingButton.triggered) 
+        {
+            OnCrafting();
+        }
+    }
+    public void OnInventory()
+    {
+        
+        //checking if inventory is open, close if is
+        if (inventoryBackground.activeInHierarchy)
+        {
+            inventoryGUI.UpdateInventory();
+            inventoryBackground.SetActive(false);
+            craftingBackground.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            move.Enable();
+            look.Enable();
+            fire.Enable();
+        }
+        //checking if crafting is open, close if is
+        else if (craftingBackground.activeInHierarchy)
+        { 
+            craftingBackground.SetActive(false);
+            inventoryBackground.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            move.Enable();
+            look.Enable();
+            fire.Enable();
+        }
+        // open inventory
+        else
+        {
+            
+            inventoryGUI.CreateInventoryGUI(inventoryScript, inventoryBackground);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            move.Disable();
+            look.Disable();
+            fire.Disable();
+        }
+    }
+    public void OnCrafting() 
+    {
+
+        // checking if crafting is already open, close if is
+        if (craftingBackground.activeInHierarchy)
+        {
+            craftingBackground.SetActive(false);
+            inventoryBackground.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            move.Enable();
+            look.Enable();
+            fire.Enable();
+        }
+        // check if inventory is open, close if is
+        else if (inventoryBackground.activeInHierarchy && !craftingBackground.activeInHierarchy)
+        {
+            inventoryGUI.UpdateInventory();
+            inventoryBackground.SetActive(false);
+            craftingGUI.CreateCraftingGUI(inventoryScript, craftingBackground, inventoryBackground);
+            Cursor.lockState= CursorLockMode.None;
+            Cursor.visible = true;
+            move.Disable();
+            look.Disable();
+            fire.Disable();
+
+        }
+        // open crafting and inventory
+        else
+        {
+            inventoryGUI.UpdateInventory();
+            craftingGUI.CreateCraftingGUI(inventoryScript, craftingBackground, inventoryBackground);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            move.Disable();
+            look.Disable();
+            fire.Disable();
+        }
+    }
+
+}
