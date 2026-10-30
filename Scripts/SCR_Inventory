@@ -1,0 +1,95 @@
+using NUnit.Framework;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class SCR_Inventory
+{
+    private List<ItemData> inventoryList;
+
+    // populate this inventory with items given
+    public void SetInventory(List<ItemData> inventory)
+    { 
+        this.inventoryList = inventory;
+    }
+
+    // add new item to this inventory
+    public void AddItem(ItemData newItem)
+    {
+        //check if item is already in inventory
+        foreach (ItemData item in inventoryList)
+        {
+            if (item.name == newItem.name)
+            {
+                item.amount += 1;
+                return;
+            }       
+        }
+        newItem.amount = 1;
+        inventoryList.Add(newItem);
+
+    }
+
+    //Remove item from this inventory
+    public void RemoveItem(ItemData item) 
+    {
+        inventoryList.Remove(item);
+    }
+
+    //Return this inventory
+    public List<ItemData> GetInventoryList() 
+    { 
+        return inventoryList; 
+    }
+
+    // Add list of items to this inventory
+    public void AddInventory(List<ItemData> itemList)
+    {
+        foreach (ItemData item in itemList)
+        { 
+            inventoryList.Add(item);
+        }
+    }
+
+    // Remove all items from this inventory
+    public void ClearInventory()
+    { 
+        inventoryList.Clear();
+    }
+
+    // Remove specific amount of items
+    public void RemoveAmountOfItem(ItemData item, int amount) 
+    {
+        int index = inventoryList.IndexOf(item);
+        if (index == -1)
+        {
+            return;
+        }
+        if (inventoryList[index].amount <= amount)
+        {
+            inventoryList[index].amount = 0;
+            inventoryList.RemoveAt(index);
+        }
+        else
+        {
+            //Uncomment to remove items
+            inventoryList[index].amount -= amount;    
+        }
+    }
+
+    // Return all items of type
+    public List<ItemData> GetItemsOfType(string type)
+    {
+        List<ItemData> itemsOfType = new List<ItemData>();
+        foreach (ItemData item in inventoryList) 
+        {
+            if (item.itemType == type)
+            { 
+                itemsOfType.Add(item);
+            }
+        }
+        return itemsOfType;
+    }
+
+}
+

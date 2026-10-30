@@ -1,0 +1,99 @@
+using UnityEngine;
+
+public class SCR_CraftingButtons : MonoBehaviour
+{
+    public GameObject player;
+    private SCR_PlayerInventory playerScript;
+    public SCR_Inventory inventory;
+    private SCR_CraftingInventory CraftingInventory;
+    private SCR_GUI_Crafting GUICrafting;
+    private SCR_GUI_Inventory GUI_Inventory;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+
+        playerScript = player.GetComponent<SCR_PlayerInventory>();
+        inventory = playerScript.inventoryScript;
+        GUICrafting = player.GetComponent<SCR_GUI_Crafting>();
+        CraftingInventory = new SCR_CraftingInventory();
+        
+        GUI_Inventory = GUICrafting.GetComponent<SCR_GUI_Inventory>();
+    }
+    private void Awake()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    public void CraftAOE()
+    {
+        // get all materials from player inventory
+        CraftingInventory.SetCraftingList(inventory);
+        
+        // Try to craft aoe firework
+        ItemData aoe = CraftingInventory.Craft(GUICrafting.craftingList[0]);
+       
+        // add aoe firework to inventory if crafted
+        if (aoe != null)
+        {
+            inventory.AddItem(aoe);
+            Debug.Log("Crafted AOE");
+            GUI_Inventory.UpdateInventory();
+        }
+        else { Debug.Log("Not enough Mats"); }
+        
+    }
+    public void CraftBasic()
+    {
+        CraftingInventory.SetCraftingList(inventory);
+        ItemData BasicAmmo = CraftingInventory.Craft(GUICrafting.craftingList[1]);
+        if (BasicAmmo != null)
+        {
+            inventory.AddItem(BasicAmmo);
+            Debug.Log("Crafted BasicAmmo");
+            GUI_Inventory.UpdateInventory();
+        }
+        else { Debug.Log("Not enough Mats"); }
+    }
+    public void CraftFirecracker()
+    {
+        CraftingInventory.SetCraftingList(inventory);
+        ItemData FireCracker = CraftingInventory.Craft(GUICrafting.craftingList[2]);
+        if (FireCracker != null)
+        {
+            inventory.AddItem(FireCracker);
+            Debug.Log("Crafted FireCraacker");
+            GUI_Inventory.UpdateInventory();
+        }
+        else { Debug.Log("Not enough Mats"); }
+    }
+    public void CraftFountain() 
+    {
+        CraftingInventory.SetCraftingList(inventory);
+        ItemData Fountain = CraftingInventory.Craft(GUICrafting.craftingList[3]);
+        if (Fountain != null)
+        {
+            inventory.AddItem(Fountain);
+            Debug.Log("Crafted Fountain");
+            GUI_Inventory.UpdateInventory();
+        }
+        else { Debug.Log("Not enough Mats"); }
+    }
+    public void CraftStun() 
+    {
+        CraftingInventory.SetCraftingList(inventory);
+        ItemData Stun = CraftingInventory.Craft(GUICrafting.craftingList[4]);
+        if (Stun != null)
+        {
+            inventory.AddItem(Stun);
+            Debug.Log("Crafted Stun");
+            GUI_Inventory.UpdateInventory();
+        }
+        else { Debug.Log("Not enough Mats"); }
+    }
+    
+}

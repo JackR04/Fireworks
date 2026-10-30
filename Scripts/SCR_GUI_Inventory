@@ -1,0 +1,71 @@
+using UnityEngine;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine.UIElements;
+using UnityEngine.UI;
+using UnityEngine.Rendering;
+//using UnityEditor.Build.Content;
+using TMPro;
+public class SCR_GUI_Inventory : MonoBehaviour
+{
+    private GameObject backGround;
+    public GameObject slot;
+    private SCR_Inventory inventory = null;
+    private List<GameObject> slotList;
+    
+   
+    private void Start()
+    {
+        //original inventory tile
+        slot.gameObject.SetActive(false);
+        
+    }
+
+    //Procedurally generate inventory when opened, populate with items in inventory
+    public void CreateInventoryGUI(SCR_Inventory inventory, GameObject backGround)
+    {
+        this.backGround = backGround;
+        this.inventory = inventory;
+        backGround.SetActive(true);
+        int Column = 0;
+        int Row = 0;
+        float padding = 64f;
+        // create a square for each item in the inventory, add items sprite and amount to square
+        foreach (ItemData item in inventory.GetInventoryList()) 
+        {
+            Vector2 position = new Vector2(Column * padding + (padding/2), Row * padding - (padding/2));
+            GameObject newslot = Instantiate(slot, Vector2.zero, Quaternion.identity, backGround.transform);
+            newslot.transform.localPosition = position ;
+            newslot.gameObject.SetActive(true);
+            newslot.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = item.Sprite;
+            newslot.transform.GetChild(1).GetComponent<TMP_Text>().text = item.itemName;
+            newslot.transform.GetChild(2).GetComponent<TMP_Text>().text = item.amount.ToString();
+            Column++;
+
+            if (Column >= 4) { 
+                Column = 0;
+                Row--;
+            }
+
+        }
+    }
+
+    // delete inventory slots and remake them
+    public void UpdateInventory()
+    {
+        if (inventory != null)
+        {
+            for (int i = 0; i < backGround.transform.childCount; i++)
+            {
+                GameObject child = backGround.transform.GetChild(i).gameObject;
+                Destroy(child);
+            }
+            CreateInventoryGUI(inventory, backGround);
+        }
+        else 
+        {
+            Debug.Log("Inventory not set, try pressing 'i' ");
+        }
+    }
+    
+}

@@ -1,0 +1,100 @@
+using NUnit.Framework;
+using UnityEngine;
+using System.Collections.Generic;
+public class SCR_CraftingInventory : MonoBehaviour
+{
+    private List<ItemData> craftingList;
+    private SCR_Inventory inventory;
+    bool hasMat1;
+    bool hasMat2;
+    bool hasMat3;
+
+    // search the players inventory for all crafting items and store
+    public void SetCraftingList(SCR_Inventory playerInventory)
+    {
+        this.inventory = playerInventory;
+        List<ItemData> craftingMaterials = new List<ItemData>();
+        if (playerInventory.GetInventoryList().Count <= 0)
+        {
+            this.craftingList = craftingMaterials;
+        }
+        else
+        {
+            foreach (ItemData item in playerInventory.GetInventoryList())
+            {
+                if (item.itemType == "Material")
+                {
+                    craftingMaterials.Add(item);
+                }
+            }
+
+            this.craftingList = craftingMaterials;
+        }
+
+    }
+
+    //return players materials
+    public List<ItemData> GetCraftingList() 
+    {
+        return this.craftingList;
+    }
+
+    // craftable data has recepie stored, if materials are in players inventory remove them all and craft the item. Currently doesnt remove items for playability
+    public ItemData Craft(CraftableData craftableData) 
+    {
+        if (craftingList.Count <= 0)
+        {
+            Debug.Log("craftingList not set");
+            return null;
+
+        }
+        foreach (ItemData item in craftingList) 
+        {
+            //player has material 1
+            if (item.itemName == craftableData.recepie[0].itemName && item.amount >= craftableData.materialAmount[0])
+            {
+                inventory.RemoveAmountOfItem(item, 0); // change zero to craftableData.materialAmount[0] to remove item on craft
+                hasMat1 = true;
+            }
+            //player has material 2
+            if (item.itemName == craftableData.recepie[1].itemName && item.amount >= craftableData.materialAmount[1]) 
+            {
+                inventory.RemoveAmountOfItem(item, 0); // change zero to craftableData.materialAmount[1] to remove item on craft
+                hasMat2 = true;
+            }
+            //player has material 3, if recepie needs 3
+            if (craftableData.recepie.Count >= 3)
+            {
+                
+                if (item.itemName == craftableData.recepie[2].itemName && item.amount >= craftableData.materialAmount[2])
+                {
+                    inventory.RemoveAmountOfItem(item, 0); // change zero to craftableData.materialAmount[2] to remove item on craft
+                    hasMat3 = true;
+                   
+                } 
+            }
+            
+        }
+        // for crafting recipies with 3 materials needed
+        if (craftableData.recepie.Count >= 3 && hasMat1 && hasMat2 && hasMat3)
+        {
+            
+            return craftableData.Item;
+
+        }
+        // for crafting recipies with 2 crafting materials
+        if (craftableData.recepie.Count < 3 && hasMat1 && hasMat2)
+        {
+            return craftableData.Item;
+        }
+        //players inventory doesnt have materials
+        else
+        {
+            return null;
+        }
+
+       
+
+      
+    }
+}
